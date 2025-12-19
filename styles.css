@@ -36,6 +36,8 @@ nav {
   font-weight: 600;
   letter-spacing: 2px;
   transition: opacity 0.3s;
+  /* Prevent text overflow */
+  white-space: nowrap;
 }
 
 .nav-links li a:hover {
@@ -47,6 +49,8 @@ nav {
   flex-direction: column;
   gap: 6px;
   cursor: pointer;
+  /* Ensure hamburger stays visible */
+  flex-shrink: 0;
 }
 
 .hamburger span {
@@ -74,23 +78,27 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Prevent content overflow */
+  overflow: hidden;
 }
 
 .content-side h1 {
-  font-size: 72px;
+  font-size: clamp(36px, 6vw, 72px); /* Responsive font size */
   font-weight: 900;
-  letter-spacing: 8px;
+  letter-spacing: clamp(4px, 0.6vw, 8px);
   margin-bottom: 50px;
   color: #000;
   line-height: 1.1;
+  word-wrap: break-word; /* Prevent text overflow */
 }
 
 .content-side p {
-  font-size: 18px;
+  font-size: clamp(16px, 1.5vw, 18px); /* Responsive font size */
   line-height: 1.8;
   color: #2c2c2c;
   margin-bottom: 60px;
   max-width: 600px;
+  word-wrap: break-word; /* Prevent text overflow */
 }
 
 .cta-button {
@@ -104,6 +112,8 @@ nav {
   transition: transform 0.3s, box-shadow 0.3s;
   width: fit-content;
   letter-spacing: 1px;
+  /* Ensure button doesn't break on zoom */
+  flex-shrink: 0;
 }
 
 .cta-button:hover {
@@ -115,13 +125,18 @@ nav {
   position: relative;
   overflow: hidden;
   background: #1a1a1a;
+  /* Maintain minimum height on all screen sizes */
+  min-height: 500px;
 }
 
 .image-side img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Prevents stretching/pixelation */
   object-position: center;
+  /* Improve image rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Gallery Section */
@@ -132,6 +147,8 @@ nav {
   align-items: center;
   justify-content: center;
   padding: 80px 40px;
+  /* Prevent overflow on small screens */
+  overflow: hidden;
 }
 
 .gallery-container {
@@ -153,6 +170,8 @@ nav {
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
+  /* Ensure proper aspect ratio maintained */
+  position: relative;
 }
 
 .gallery-item:hover {
@@ -162,8 +181,11 @@ nav {
 .gallery-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Prevents stretching/pixelation */
   display: block;
+  /* Improve image rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .gallery-item:nth-child(1) {
@@ -183,23 +205,27 @@ nav {
   background: linear-gradient(135deg, #ff7a7a 0%, #ff9999 100%);
   padding: 80px 60px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  /* Prevent content overflow */
+  overflow: hidden;
 }
 
 .content-card .subtitle {
-  font-size: 16px;
+  font-size: clamp(14px, 1.2vw, 16px); /* Responsive font size */
   letter-spacing: 4px;
   font-weight: 600;
   margin-bottom: 20px;
   color: #000;
+  word-wrap: break-word;
 }
 
 .content-card h2 {
-  font-size: 64px;
+  font-size: clamp(32px, 5vw, 64px); /* Responsive font size */
   font-weight: 900;
-  letter-spacing: 4px;
+  letter-spacing: clamp(2px, 0.4vw, 4px);
   margin-bottom: 60px;
   line-height: 1.1;
   color: #000;
+  word-wrap: break-word; /* Prevent text overflow */
 }
 
 .arrow-button {
@@ -212,6 +238,8 @@ nav {
   text-decoration: none;
   cursor: pointer;
   transition: gap 0.3s;
+  /* Prevent button from breaking */
+  flex-shrink: 0;
 }
 
 .arrow-button:hover {
@@ -223,6 +251,8 @@ nav {
   height: 4px;
   background-color: #000;
   position: relative;
+  /* Ensure arrow maintains shape */
+  flex-shrink: 0;
 }
 
 .arrow::after {
@@ -237,6 +267,21 @@ nav {
   transform: rotate(45deg);
 }
 
+/* Added tablet breakpoint for better responsive design */
+@media (max-width: 1200px) {
+  nav {
+    padding: 20px 30px;
+  }
+
+  .nav-links {
+    gap: 35px;
+  }
+
+  .content-side {
+    padding: 80px 60px;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .nav-links {
@@ -245,26 +290,33 @@ nav {
 
   .nav-links li a {
     font-size: 16px;
+    letter-spacing: 1.5px;
   }
 
   .content-side {
     padding: 60px 40px;
   }
 
-  .content-side h1 {
-    font-size: 56px;
-  }
-
   .gallery-container {
     grid-template-columns: 1fr;
+    gap: 60px; /* Increased gap for better spacing */
   }
 
-  .content-card h2 {
-    font-size: 48px;
+  .gallery {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .content-card {
+    padding: 60px 50px;
   }
 }
 
 @media (max-width: 768px) {
+  nav {
+    padding: 15px 20px;
+  }
+
   .hero-section {
     grid-template-columns: 1fr;
   }
@@ -273,13 +325,22 @@ nav {
     display: none;
   }
 
-  .content-side h1 {
-    font-size: 48px;
-    letter-spacing: 4px;
+  .content-side {
+    padding: 40px 30px; /* Adjusted padding for mobile */
+  }
+
+  .content-side p {
+    margin-bottom: 40px;
+  }
+
+  .cta-button {
+    padding: 18px 50px; /* Adjusted button size for mobile */
+    font-size: 16px;
   }
 
   .image-side {
     min-height: 400px;
+    order: -1; /* Image appears at top on mobile */
   }
 
   .gallery-section {
@@ -288,6 +349,12 @@ nav {
 
   .gallery {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .gallery-item:nth-child(1),
+  .gallery-item:nth-child(2) {
+    height: 200px; /* Adjusted height for mobile */
   }
 
   .gallery-item:nth-child(3) {
@@ -299,7 +366,62 @@ nav {
     padding: 40px 30px;
   }
 
+  .content-card .subtitle {
+    letter-spacing: 2px;
+  }
+
   .content-card h2 {
-    font-size: 36px;
+    margin-bottom: 40px;
+  }
+
+  .arrow-button {
+    font-size: 18px;
+  }
+}
+
+/* Added extra small screen support */
+@media (max-width: 480px) {
+  nav {
+    padding: 12px 15px;
+  }
+
+  .hamburger span {
+    width: 30px;
+  }
+
+  .content-side {
+    padding: 30px 20px;
+  }
+
+  .content-side h1 {
+    margin-bottom: 30px;
+  }
+
+  .content-side p {
+    margin-bottom: 30px;
+  }
+
+  .cta-button {
+    padding: 15px 40px;
+    font-size: 15px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .gallery-item:nth-child(1),
+  .gallery-item:nth-child(2) {
+    height: 180px;
+  }
+
+  .gallery-item:nth-child(3) {
+    height: 250px;
+  }
+
+  .content-card {
+    padding: 30px 20px;
+  }
+
+  .content-card h2 {
+    margin-bottom: 30px;
   }
 }
