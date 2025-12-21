@@ -7,41 +7,56 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
+  /* Added to prevent horizontal scroll on zoom */
+  width: 100%;
+  position: relative;
 }
 
 /* Navigation */
 nav {
   background: linear-gradient(135deg, #ff8a80 0%, #ff7070 100%);
-  padding: 20px 40px;
+  padding: clamp(12px, 2vh, 20px) clamp(20px, 4vw, 40px); /* Using clamp for fluid padding */
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   z-index: 10;
+  /* Prevent navigation from breaking on zoom */
+  flex-wrap: nowrap;
+  min-height: 60px;
 }
 
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 50px;
+  gap: clamp(20px, 3vw, 50px); /* Using clamp for fluid spacing */
   flex: 1;
   justify-content: center;
   align-items: center;
+  /* Prevent wrapping on zoom */
+  flex-wrap: wrap;
 }
 
 .nav-links li a {
   color: #000;
   text-decoration: none;
-  font-size: 18px;
+  font-size: clamp(14px, 1.2vw, 18px); /* Fluid font size */
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: clamp(1px, 0.15vw, 2px); /* Fluid letter spacing */
   transition: opacity 0.3s;
-  /* Prevent text overflow */
   white-space: nowrap;
+  /* Ensure text doesn't overflow on zoom */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-links li a:hover {
   opacity: 0.7;
+}
+
+/* CSS-only hamburger menu using checkbox hack */
+.menu-toggle {
+  display: none;
 }
 
 .hamburger {
@@ -49,8 +64,9 @@ nav {
   flex-direction: column;
   gap: 6px;
   cursor: pointer;
-  /* Ensure hamburger stays visible */
   flex-shrink: 0;
+  z-index: 1001;
+  position: relative;
 }
 
 .hamburger span {
@@ -58,11 +74,79 @@ nav {
   height: 4px;
   background: #000;
   border-radius: 2px;
-  transition: transform 0.3s;
+  transition: all 0.3s ease;
 }
 
 .hamburger:hover span {
   background: #333;
+}
+
+/* Hamburger animation on checked state */
+.menu-toggle:checked + .hamburger span:nth-child(1) {
+  transform: rotate(45deg) translate(10px, 10px);
+}
+
+.menu-toggle:checked + .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle:checked + .hamburger span:nth-child(3) {
+  transform: rotate(-45deg) translate(8px, -8px);
+}
+
+/* Mobile menu slider styles */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(300px, 85vw); /* Using min() for better mobile responsiveness */
+  max-width: 350px; /* Added max-width constraint */
+  height: 100vh;
+  background: linear-gradient(135deg, #ff8a80 0%, #ff7070 100%);
+  z-index: 999;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+/* Show mobile menu when checkbox is checked */
+.menu-toggle:checked ~ .mobile-menu {
+  right: 0;
+}
+
+/* Prevent body scroll when menu is open */
+.menu-toggle:checked ~ .hero-section,
+.menu-toggle:checked ~ .gallery-section {
+  filter: brightness(0.5);
+  pointer-events: none;
+}
+
+.mobile-nav-links {
+  list-style: none;
+  padding: 80px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-nav-links li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-nav-links li a {
+  display: block;
+  color: #000;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 20px 0;
+  transition: padding-left 0.3s, opacity 0.3s;
+}
+
+.mobile-nav-links li a:hover {
+  padding-left: 10px;
+  opacity: 0.7;
 }
 
 /* Hero Section */
@@ -71,49 +155,62 @@ nav {
   grid-template-columns: 1fr 1fr;
   min-height: calc(100vh - 68px);
   background: linear-gradient(135deg, #fffacd 0%, #ffd1dc 50%, #e6e6fa 100%);
+  transition: filter 0.3s;
+  /* Prevent breaking on zoom */
+  position: relative;
+  width: 100%;
 }
 
 .content-side {
-  padding: 100px 80px;
+  padding: clamp(40px, 10vh, 100px) clamp(30px, 8vw, 80px); /* Fluid padding */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Prevent content overflow */
   overflow: hidden;
+  /* Ensure content stays within bounds */
+  max-width: 100%;
 }
 
 .content-side h1 {
-  font-size: clamp(36px, 6vw, 72px); /* Responsive font size */
+  font-size: clamp(36px, 6vw, 72px);
   font-weight: 900;
   letter-spacing: clamp(4px, 0.6vw, 8px);
-  margin-bottom: 50px;
+  margin-bottom: clamp(30px, 5vh, 50px); /* Fluid margin */
   color: #000;
   line-height: 1.1;
-  word-wrap: break-word; /* Prevent text overflow */
+  word-wrap: break-word;
+  /* Additional overflow protection */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .content-side p {
-  font-size: clamp(16px, 1.5vw, 18px); /* Responsive font size */
+  font-size: clamp(16px, 1.5vw, 18px);
   line-height: 1.8;
   color: #2c2c2c;
-  margin-bottom: 60px;
+  margin-bottom: clamp(40px, 6vh, 60px); /* Fluid margin */
   max-width: 600px;
-  word-wrap: break-word; /* Prevent text overflow */
+  word-wrap: break-word;
+  /* Additional overflow protection */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .cta-button {
   background: linear-gradient(135deg, #ff8a80 0%, #ff7070 100%);
   color: #fff;
   border: none;
-  padding: 20px 60px;
-  font-size: 18px;
+  padding: clamp(15px, 2vh, 20px) clamp(40px, 6vw, 60px); /* Fluid padding */
+  font-size: clamp(16px, 1.4vw, 18px); /* Fluid font size */
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   width: fit-content;
   letter-spacing: 1px;
-  /* Ensure button doesn't break on zoom */
   flex-shrink: 0;
+  /* Prevent button text from breaking */
+  white-space: nowrap;
+  min-width: min-content;
 }
 
 .cta-button:hover {
@@ -125,53 +222,70 @@ nav {
   position: relative;
   overflow: hidden;
   background: #1a1a1a;
-  /* Maintain minimum height on all screen sizes */
-  min-height: 500px;
+  min-height: clamp(400px, 50vh, 600px); /* Fluid min-height */
+  /* Ensure image container maintains aspect ratio */
+  width: 100%;
 }
 
 .image-side img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Prevents stretching/pixelation */
+  object-fit: cover;
   object-position: center;
-  /* Improve image rendering */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Additional image quality settings */
+  max-width: 100%;
+  display: block;
 }
 
 /* Gallery Section */
 .gallery-section {
-  background: linear-gradient(135deg, #fffacd 0%, #ffb6c1 50%, #dda0dd 100%);
+  /* Updated gradient to more closely match design - smoother transition from yellow to pink to purple */
+  background: linear-gradient(135deg, #fffacd 0%, #ffccd5 30%, #ffb8d9 55%, #e8c5ff 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80px 40px;
-  /* Prevent overflow on small screens */
+  padding: clamp(40px, 8vh, 80px) clamp(20px, 4vw, 40px); /* Fluid padding */
   overflow: hidden;
+  transition: filter 0.3s;
+  /* Ensure section doesn't break on zoom */
+  width: 100%;
+  position: relative;
 }
 
 .gallery-container {
   width: 100%;
   max-width: 1400px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  /* Adjusted column proportions to better match design layout */
+  grid-template-columns: minmax(200px, 280px) minmax(300px, 1fr) minmax(350px, 500px);
+  /* Adjusted gap for better spacing */
+  gap: clamp(25px, 3.5vw, 45px);
   align-items: center;
 }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+/* New layout structure for left stacked images */
+.gallery-left {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.5vh, 25px);
+}
+
+.gallery-right {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .gallery-item {
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
-  /* Ensure proper aspect ratio maintained */
   position: relative;
+  /* Prevent image containers from breaking */
+  width: 100%;
+  max-width: 100%;
 }
 
 .gallery-item:hover {
@@ -181,77 +295,85 @@ nav {
 .gallery-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Prevents stretching/pixelation */
+  object-fit: cover;
   display: block;
-  /* Improve image rendering */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Prevent image overflow on zoom */
+  max-width: 100%;
 }
 
-.gallery-item:nth-child(1) {
-  height: 250px;
+/* Specific sizing for small stacked images on left */
+.gallery-item.small {
+  /* Adjusted height for better proportions matching design */
+  height: clamp(180px, 24vh, 230px);
 }
 
-.gallery-item:nth-child(2) {
-  height: 250px;
-}
-
-.gallery-item:nth-child(3) {
-  grid-column: span 2;
-  height: 450px;
+/* Large image takes full height on right */
+.gallery-item.large {
+  /* Adjusted height to match the stacked images total height */
+  height: clamp(390px, 50vh, 485px);
+  width: 100%;
 }
 
 .content-card {
-  background: linear-gradient(135deg, #ff7a7a 0%, #ff9999 100%);
-  padding: 80px 60px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  /* Prevent content overflow */
+  /* Removed shadow for flatter design matching reference */
+  background: linear-gradient(135deg, #ff8080 0%, #ffa0a0 100%);
+  padding: clamp(45px, 8vh, 90px) clamp(35px, 6vw, 70px);
   overflow: hidden;
+  /* Ensure card doesn't break on zoom */
+  max-width: 100%;
+  width: 100%;
 }
 
 .content-card .subtitle {
-  font-size: clamp(14px, 1.2vw, 16px); /* Responsive font size */
-  letter-spacing: 4px;
+  font-size: clamp(14px, 1.2vw, 16px);
+  letter-spacing: clamp(2px, 0.3vw, 4px); /* Fluid letter spacing */
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px); /* Fluid margin */
   color: #000;
   word-wrap: break-word;
+  /* Additional overflow protection */
+  overflow-wrap: break-word;
 }
 
 .content-card h2 {
-  font-size: clamp(32px, 5vw, 64px); /* Responsive font size */
+  font-size: clamp(32px, 5vw, 64px);
   font-weight: 900;
   letter-spacing: clamp(2px, 0.4vw, 4px);
-  margin-bottom: 60px;
+  margin-bottom: clamp(40px, 6vh, 60px); /* Fluid margin */
   line-height: 1.1;
   color: #000;
-  word-wrap: break-word; /* Prevent text overflow */
+  word-wrap: break-word;
+  /* Additional overflow protection */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .arrow-button {
   display: inline-flex;
   align-items: center;
-  gap: 20px;
-  font-size: 20px;
+  gap: clamp(15px, 2vw, 20px); /* Fluid gap */
+  font-size: clamp(18px, 1.5vw, 20px); /* Fluid font size */
   font-weight: 600;
   color: #000;
   text-decoration: none;
   cursor: pointer;
   transition: gap 0.3s;
-  /* Prevent button from breaking */
   flex-shrink: 0;
+  /* Prevent button from breaking */
+  white-space: nowrap;
 }
 
 .arrow-button:hover {
-  gap: 30px;
+  gap: clamp(20px, 2.5vw, 30px); /* Fluid gap on hover */
 }
 
 .arrow {
-  width: 40px;
+  width: clamp(30px, 3vw, 40px); /* Fluid width */
   height: 4px;
   background-color: #000;
   position: relative;
-  /* Ensure arrow maintains shape */
   flex-shrink: 0;
 }
 
@@ -268,160 +390,225 @@ nav {
 }
 
 /* Added tablet breakpoint for better responsive design */
-@media (max-width: 1200px) {
-  nav {
-    padding: 20px 30px;
-  }
-
-  .nav-links {
-    gap: 35px;
+@media (min-width: 1600px) {
+  .gallery-container {
+    max-width: 1600px;
   }
 
   .content-side {
-    padding: 80px 60px;
+    max-width: 800px;
   }
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .nav-links {
-    gap: 30px;
+@media (max-width: 1200px) {
+  nav {
+    padding: clamp(15px, 2vh, 20px) clamp(20px, 3vw, 30px);
   }
 
-  .nav-links li a {
-    font-size: 16px;
-    letter-spacing: 1.5px;
+  .nav-links {
+    gap: clamp(20px, 2.5vw, 35px);
   }
 
   .content-side {
-    padding: 60px 40px;
+    padding: clamp(60px, 8vh, 80px) clamp(40px, 6vw, 60px);
+  }
+
+  /* Better gallery layout for medium screens */
+  .gallery-container {
+    grid-template-columns: minmax(220px, 260px) 1fr minmax(350px, 480px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .nav-links {
+    gap: clamp(15px, 2vw, 30px);
+  }
+
+  .nav-links li a {
+    font-size: clamp(14px, 1.1vw, 16px);
+    letter-spacing: clamp(1px, 0.12vw, 1.5px);
+  }
+
+  .content-side {
+    padding: clamp(40px, 6vh, 60px) clamp(30px, 5vw, 40px);
   }
 
   .gallery-container {
     grid-template-columns: 1fr;
-    gap: 60px; /* Increased gap for better spacing */
+    gap: clamp(30px, 4vh, 40px);
   }
 
-  .gallery {
+  .gallery-left {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(15px, 2vw, 20px);
     max-width: 700px;
     margin: 0 auto;
   }
 
+  .gallery-right {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .gallery-item.small {
+    height: clamp(180px, 22vh, 200px);
+  }
+
+  .gallery-item.large {
+    height: clamp(340px, 45vh, 400px);
+  }
+
   .content-card {
-    padding: 60px 50px;
+    padding: clamp(50px, 7vh, 60px) clamp(40px, 5vw, 50px);
   }
 }
 
 @media (max-width: 768px) {
   nav {
-    padding: 15px 20px;
+    padding: clamp(12px, 2vh, 15px) clamp(15px, 3vw, 20px);
   }
 
   .hero-section {
     grid-template-columns: 1fr;
+    /* Ensure proper stacking on mobile */
+    min-height: auto;
   }
 
   .nav-links {
     display: none;
   }
 
+  .hamburger {
+    display: flex;
+    z-index: 1000;
+    position: relative;
+  }
+
   .content-side {
-    padding: 40px 30px; /* Adjusted padding for mobile */
+    padding: clamp(30px, 5vh, 40px) clamp(20px, 4vw, 30px);
   }
 
   .content-side p {
-    margin-bottom: 40px;
+    margin-bottom: clamp(30px, 4vh, 40px);
   }
 
   .cta-button {
-    padding: 18px 50px; /* Adjusted button size for mobile */
-    font-size: 16px;
+    padding: clamp(15px, 2vh, 18px) clamp(40px, 8vw, 50px);
+    font-size: clamp(15px, 1.3vw, 16px);
   }
 
   .image-side {
-    min-height: 400px;
-    order: -1; /* Image appears at top on mobile */
+    min-height: clamp(350px, 45vh, 400px);
+    order: -1;
   }
 
   .gallery-section {
-    padding: 40px 20px;
+    padding: clamp(30px, 5vh, 40px) clamp(15px, 3vw, 20px);
   }
 
-  .gallery {
+  .gallery-left {
     grid-template-columns: 1fr;
-    gap: 15px;
   }
 
-  .gallery-item:nth-child(1),
-  .gallery-item:nth-child(2) {
-    height: 200px; /* Adjusted height for mobile */
+  .gallery-item.small {
+    height: clamp(180px, 23vh, 200px);
   }
 
-  .gallery-item:nth-child(3) {
-    grid-column: span 1;
-    height: 300px;
+  .gallery-item.large {
+    height: clamp(280px, 38vh, 300px);
   }
 
   .content-card {
-    padding: 40px 30px;
+    padding: clamp(35px, 5vh, 40px) clamp(25px, 4vw, 30px);
   }
 
   .content-card .subtitle {
-    letter-spacing: 2px;
+    letter-spacing: clamp(1.5px, 0.2vw, 2px);
   }
 
   .content-card h2 {
-    margin-bottom: 40px;
+    margin-bottom: clamp(30px, 4vh, 40px);
   }
 
   .arrow-button {
-    font-size: 18px;
+    font-size: clamp(16px, 1.4vw, 18px);
   }
 }
 
-/* Added extra small screen support */
 @media (max-width: 480px) {
   nav {
-    padding: 12px 15px;
+    padding: clamp(10px, 1.5vh, 12px) clamp(12px, 2.5vw, 15px);
   }
 
   .hamburger span {
-    width: 30px;
+    width: clamp(28px, 6vw, 30px); /* Fluid hamburger size */
   }
 
   .content-side {
-    padding: 30px 20px;
+    padding: clamp(25px, 4vh, 30px) clamp(15px, 3vw, 20px);
   }
 
   .content-side h1 {
-    margin-bottom: 30px;
+    margin-bottom: clamp(25px, 3vh, 30px);
   }
 
   .content-side p {
-    margin-bottom: 30px;
+    margin-bottom: clamp(25px, 3vh, 30px);
   }
 
   .cta-button {
-    padding: 15px 40px;
-    font-size: 15px;
+    padding: clamp(14px, 1.8vh, 15px) clamp(35px, 7vw, 40px);
+    font-size: clamp(14px, 1.2vw, 15px);
     width: 100%;
     text-align: center;
   }
 
-  .gallery-item:nth-child(1),
-  .gallery-item:nth-child(2) {
-    height: 180px;
+  .gallery-item.small {
+    height: clamp(160px, 20vh, 180px);
   }
 
-  .gallery-item:nth-child(3) {
-    height: 250px;
+  .gallery-item.large {
+    height: clamp(230px, 32vh, 250px);
   }
 
   .content-card {
-    padding: 30px 20px;
+    padding: clamp(28px, 4vh, 30px) clamp(18px, 3vw, 20px);
   }
 
   .content-card h2 {
-    margin-bottom: 30px;
+    margin-bottom: clamp(28px, 3.5vh, 30px);
+  }
+}
+
+/* Added zoom-specific optimizations */
+@media (min-resolution: 120dpi) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  img {
+    image-rendering: auto;
+  }
+}
+
+/* Support for very small screens and extreme zoom */
+@media (max-width: 360px) {
+  .hero-section {
+    min-height: auto;
+  }
+
+  .image-side {
+    min-height: clamp(280px, 40vh, 320px);
+  }
+
+  .gallery-item.small {
+    height: clamp(140px, 18vh, 160px);
+  }
+
+  .gallery-item.large {
+    height: clamp(200px, 28vh, 230px);
   }
 }
